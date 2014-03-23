@@ -1,5 +1,4 @@
 package net.vrallev.gradle.jarjar
-
 import net.vrallev.gradle.jarjar.tasks.CreateRulesFileTask
 import net.vrallev.gradle.jarjar.tasks.RepackageTask
 import org.gradle.api.Plugin
@@ -21,25 +20,41 @@ class JarJarPlugin implements Plugin<Project> {
 
         project.afterEvaluate {
             project.tasks.preBuild.dependsOn project.task('runJarJar', type: RepackageTask)
+            project.tasks.runJarJar.dependsOn project.task('createRulesFile', type: CreateRulesFileTask)
 
-            project.tasks.runJarJar.dependsOn project.task('createRawFatJar', type: Jar) {
+            // this task may be slow, so use hash check
+            if (!hashAvailable(project)) {
+                project.tasks.createRulesFile.dependsOn project.task('createRawFatJar', type: Jar) {
 
-                getDependencies(project).each { File file ->
-                    from project.zipTree(file)
+                    getDependencies(project).each { File file ->
+                        from project.zipTree(file)
+                    }
+
+                    if (getExtension(project).srcExcludes != null && !getExtension(project).srcExcludes.isEmpty()) {
+                        excludes = getExtension(project).srcExcludes
+                    }
+                    destinationDir getOutputDirRaw(project)
+                    archiveName = getRawJar(project).name
                 }
-
-                if (getExtension(project).srcExcludes != null && !getExtension(project).srcExcludes.isEmpty()) {
-                    excludes = getExtension(project).srcExcludes
-                }
-                destinationDir getOutputDirRaw(project)
-                archiveName = getRawJar(project).name
             }
-
-            project.tasks.createRawFatJar.dependsOn project.task('createRulesFile', type: CreateRulesFileTask)
         }
     }
 
+    private static boolean hashAvailable(Project project) {
+        File hashDir = new File(getOutputDirRaw(project), 'hash')
 
+        int hash = project.configurations.jarjar.getAsPath().hashCode()
+        File hashFile = new File(hashDir, '' + hash)
+
+        if (hashFile.exists()) {
+            return true
+        } else {
+            hashDir.deleteDir()
+            hashDir.mkdirs()
+            hashFile.createNewFile()
+            return false
+        }
+    }
 
 
     private static Configuration addConfiguration(Project project, String name) {
