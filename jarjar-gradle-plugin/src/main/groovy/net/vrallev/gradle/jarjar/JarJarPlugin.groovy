@@ -113,6 +113,7 @@ class JarJarPlugin implements Plugin<Project> {
     }
 
     public static File getResultFile(Project project) {
-        return new File(project.projectDir.name + File.separatorChar + getExtension(project).outputDir, getExtension(project).outputName)
+        def ext = getExtension(project)
+        return new File(project.projectDir, "$ext.outputDir$File.separator$ext.outputName")
     }
 }
