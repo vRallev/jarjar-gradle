@@ -22,20 +22,22 @@ class JarJarPlugin implements Plugin<Project> {
             project.tasks.preBuild.dependsOn project.task('runJarJar', type: RepackageTask)
             project.tasks.runJarJar.dependsOn project.task('createRulesFile', type: CreateRulesFileTask)
 
+            project.task('createRawFatJar', type: Jar) {
+
+                getDependencies(project).each { File file ->
+                    from project.zipTree(file)
+                }
+
+                if (getExtension(project).srcExcludes != null && !getExtension(project).srcExcludes.isEmpty()) {
+                    excludes = getExtension(project).srcExcludes
+                }
+                destinationDir getOutputDirRaw(project)
+                archiveName = getRawJar(project).name
+            }
+
             // this task may be slow, so use hash check
             if (!hashAvailable(project)) {
-                project.tasks.createRulesFile.dependsOn project.task('createRawFatJar', type: Jar) {
-
-                    getDependencies(project).each { File file ->
-                        from project.zipTree(file)
-                    }
-
-                    if (getExtension(project).srcExcludes != null && !getExtension(project).srcExcludes.isEmpty()) {
-                        excludes = getExtension(project).srcExcludes
-                    }
-                    destinationDir getOutputDirRaw(project)
-                    archiveName = getRawJar(project).name
-                }
+                project.tasks.createRulesFile.dependsOn project.tasks.findByName('createRawFatJar')
             }
         }
     }

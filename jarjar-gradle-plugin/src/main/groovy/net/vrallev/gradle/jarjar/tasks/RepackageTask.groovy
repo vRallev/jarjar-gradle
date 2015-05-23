@@ -30,6 +30,10 @@ class RepackageTask extends DefaultTask {
         final File rulesFile = JarJarPlugin.getRulesFile(project)
         final File outJar = JarJarPlugin.getResultFile(project)
 
+        if (!rawFatJar.exists()) {
+            project.tasks.findByName('createRawFatJar').execute()
+        }
+
         project.exec {
             workingDir project.projectDir
             ignoreExitValue = true
@@ -43,7 +47,7 @@ class RepackageTask extends DefaultTask {
 
         String variantString = getVariant(project)
         if (variantString) {
-            // add this for the very first build
+            // add this for the very first build, otherwise compile task won't find repackaged jar
             project.android[variantString].all { variant ->
                 JavaCompile compileTask = variant.getJavaCompile()
                 if (!compileTask.classpath.contains(outJar)) {
@@ -54,9 +58,9 @@ class RepackageTask extends DefaultTask {
     }
 
     private static String getVariant(Project project) {
-        if (project.plugins.findPlugin("android")) {
+        if (project.plugins.findPlugin("com.android.application")) {
             return "applicationVariants";
-        } else if (project.plugins.findPlugin("android-library")) {
+        } else if (project.plugins.findPlugin("com.android.library")) {
             return  "libraryVariants";
         } else {
             return null;
