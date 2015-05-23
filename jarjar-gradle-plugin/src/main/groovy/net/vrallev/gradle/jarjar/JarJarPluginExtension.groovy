@@ -13,12 +13,15 @@ class JarJarPluginExtension {
     String outputName = 'build_repackaged.jar'
     String outputDir = 'libs'
 
+    boolean ignoreJarJarResult = false
+
     boolean equals(o) {
         if (this.is(o)) return true
-        if (!(o instanceof JarJarPluginExtension)) return false
+        if (getClass() != o.class) return false
 
         JarJarPluginExtension that = (JarJarPluginExtension) o
 
+        if (ignoreJarJarResult != that.ignoreJarJarResult) return false
         if (jarJarFile != that.jarJarFile) return false
         if (outputDir != that.outputDir) return false
         if (outputName != that.outputName) return false
@@ -35,6 +38,7 @@ class JarJarPluginExtension {
         result = 31 * result + (srcExcludes != null ? srcExcludes.hashCode() : 0)
         result = 31 * result + (outputName != null ? outputName.hashCode() : 0)
         result = 31 * result + (outputDir != null ? outputDir.hashCode() : 0)
+        result = 31 * result + (ignoreJarJarResult ? 1 : 0)
         return result
     }
 
@@ -46,6 +50,7 @@ class JarJarPluginExtension {
                 ", srcExcludes=" + srcExcludes +
                 ", outputName='" + outputName + '\'' +
                 ", outputDir='" + outputDir + '\'' +
+                ", ignoreJarJarResult=" + ignoreJarJarResult +
                 '}';
     }
 }

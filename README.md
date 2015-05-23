@@ -42,6 +42,9 @@ jarjar {
 
     // optional, default is libs, the directory of the result .jar 
     outputDir 'libs'
+
+    // optional, default is false
+    ignoreJarJarResult false
 }
 
 dependencies {

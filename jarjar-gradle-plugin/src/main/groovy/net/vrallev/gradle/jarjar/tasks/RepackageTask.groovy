@@ -36,7 +36,7 @@ class RepackageTask extends DefaultTask {
 
         project.exec {
             workingDir project.projectDir
-            ignoreExitValue = true
+            ignoreExitValue = JarJarPlugin.getExtension(project).ignoreJarJarResult
 
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                 commandLine 'cmd', '/c', 'java', '-jar', jarJarExeFile.absolutePath, 'process', rulesFile.absolutePath, rawFatJar.absolutePath, outJar.absolutePath
