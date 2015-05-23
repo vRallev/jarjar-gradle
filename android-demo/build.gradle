@@ -1,0 +1,24 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'net.vrallev.gradle:jarjar-gradle:1.0.1-SNAPSHOT'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+ext {
+    compileSdkVersion = 22
+    targetSdkVersion = compileSdkVersion
+    minSdkVersion = 14
+    buildToolsVersion = "22.0.1"
+}
+

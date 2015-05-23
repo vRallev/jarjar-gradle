@@ -1,0 +1,57 @@
+apply plugin: 'com.android.application'
+apply plugin: 'net.vrallev.jarjar'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "net.vrallev.android.jarjar.demo"
+
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
+        versionName '1.0.0'
+        versionCode 1
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    lintOptions {
+        abortOnError true
+
+        htmlOutput file("$project.buildDir/reports/lint/lint.html")
+        xmlOutput file("$project.buildDir/reports/lint/lint.xml")
+    }
+}
+
+jarjar {
+    // required, path to the executable .jar file
+    jarJarFile '../tools/jarjar-1.4.jar'
+
+    // optional, the rules for the jarjar tool
+    rules = [
+            'rule com.squareup.okhttp.** ext.com.squareup.okhttp.@1'
+    ]
+
+    // optional, exclude files from the dependency .jar files
+    srcExcludes = ['META-INF/**']
+
+    // optional, default is build_repackaged.jar, the result .jar file name
+    outputName 'build_repackaged.jar'
+
+    // optional, default is libs, the directory of the result .jar
+    outputDir 'libs'
+
+    // optional, default is false
+    ignoreJarJarResult false
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    jarjar 'com.squareup.okhttp:okhttp:2.4.0-RC1'
+}
