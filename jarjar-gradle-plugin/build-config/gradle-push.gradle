@@ -1,0 +1,108 @@
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+def isReleaseBuild() {
+    return VERSION_NAME.contains("SNAPSHOT") == false
+}
+
+def isLocal() {
+    return hasProperty('local') ? Boolean.parseBoolean(getProperty('local')) : true;
+}
+
+def getReleaseRepositoryUrl() {
+    if (isLocal()) {
+        return hasProperty('RELEASE_REPOSITORY_LOCAL') ? RELEASE_REPOSITORY_LOCAL : "file://${System.env.HOME}/.m2/repository"
+    } else {
+        return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+    }
+}
+
+def getSnapshotRepositoryUrl() {
+    if (isLocal()) {
+        return hasProperty('SNAPSHOT_REPOSITORY_LOCAL') ? SNAPSHOT_REPOSITORY_LOCAL : "file://${System.env.HOME}/.m2/repository"
+    } else {
+        return hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL : "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+}
+
+def getRepositoryUsername() {
+    return hasProperty('SONATYPE_USERNAME') ? SONATYPE_USERNAME : ""
+}
+
+def getRepositoryPassword() {
+    return hasProperty('SONATYPE_PASSWORD') ? SONATYPE_PASSWORD : ""
+}
+
+afterEvaluate { project ->
+    uploadArchives {
+        //noinspection GradleMisplacedStatement
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                pom.groupId = 'net.vrallev.gradle'
+                pom.artifactId = 'jarjar-gradle'
+                pom.version = VERSION_NAME
+
+                repository(url: getReleaseRepositoryUrl()) {
+                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+                }
+                snapshotRepository(url: getSnapshotRepositoryUrl()) {
+                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+                }
+
+                pom.project {
+                    name 'JarJar Gradle Plugin'
+                    description 'A helper plugin to use the jarjar tool.'
+                    url 'https://github.com/vRallev/jarjar-gradle'
+                    inceptionYear '2014'
+
+                    scm {
+                        url 'https://github.com/vRallev/jarjar-gradle'
+                        connection 'scm:git:git://github.com/vRallev/jarjar-gradle.git'
+                        developerConnection 'scm:git:git@github.com:vRallev/jarjar-gradle.git'
+                    }
+
+                    developers {
+                        developer {
+                            name 'Ralf Wondratschek'
+                            email 'r.wondr@gmail.com'
+                            id 'rwondratschek'
+                            url 'http://vrallev.net'
+                            timezone '+1'
+                            roles {
+                                role 'developer'
+                            }
+                        }
+                    }
+
+                    issueManagement {
+                        system 'GitHub Issues'
+                        url 'https://github.com/vRallev/jarjar-gradle/issues'
+                    }
+                }
+            }
+        }
+    }
+
+    signing {
+        required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
+        sign configurations.archives
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from groovydoc
+    }
+
+    task sourcesJar(type: Jar) {
+        from sourceSets.main.allSource
+        classifier = 'sources'
+    }
+
+    artifacts {
+        archives jar
+        archives javadocJar
+        archives sourcesJar
+    }
+}

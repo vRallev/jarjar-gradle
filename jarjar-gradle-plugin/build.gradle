@@ -5,11 +5,4 @@ dependencies {
     compile localGroovy()
 }
 
-def isReleaseBuild() {
-    return hasProperty('snapshot') && 'false'.equals(getProperty('snapshot'))
-}
-
-group = GROUP
-version = VERSION_NAME + (isReleaseBuild() ? '' : '-SNAPSHOT')
-
-apply from: 'gradle-mvn-push.gradle'
+apply from: 'build-config/gradle-push.gradle'
