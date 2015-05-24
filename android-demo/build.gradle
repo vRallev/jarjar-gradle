@@ -5,7 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
-        classpath 'net.vrallev.gradle:jarjar-gradle:1.0.1-SNAPSHOT'
+        classpath 'net.vrallev.gradle:jarjar-gradle:1.1.0-SNAPSHOT'
     }
 }
 
