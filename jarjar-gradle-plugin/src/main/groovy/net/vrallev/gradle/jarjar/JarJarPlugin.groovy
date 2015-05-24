@@ -1,6 +1,7 @@
 package net.vrallev.gradle.jarjar
 import net.vrallev.gradle.jarjar.tasks.CreateRulesFileTask
 import net.vrallev.gradle.jarjar.tasks.RepackageTask
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
@@ -19,7 +20,16 @@ class JarJarPlugin implements Plugin<Project> {
         project.extensions.create('jarjar', JarJarPluginExtension)
 
         project.afterEvaluate {
-            project.tasks.preBuild.dependsOn project.task('runJarJar', type: RepackageTask)
+            if (isJavaProject(project)) {
+                project.tasks.compileJava.dependsOn project.task('runJarJar', type: RepackageTask)
+
+            } else if (isAndroidProject(project)) {
+                project.tasks.preBuild.dependsOn project.task('runJarJar', type: RepackageTask)
+
+            } else {
+                throw new GradleException('unknown plugin type')
+            }
+
             project.tasks.runJarJar.dependsOn project.task('createRulesFile', type: CreateRulesFileTask)
 
             project.task('createRawFatJar', type: Jar) {
@@ -117,5 +127,13 @@ class JarJarPlugin implements Plugin<Project> {
     public static File getResultFile(Project project) {
         def ext = getExtension(project)
         return new File(project.projectDir, "$ext.outputDir$File.separator$ext.outputName")
+    }
+
+    public static boolean isJavaProject(Project project) {
+        project.plugins.findPlugin('java')
+    }
+
+    public static boolean isAndroidProject(Project project) {
+        project.plugins.findPlugin('com.android.application') || project.plugins.findPlugin('com.android.library')
     }
 }
