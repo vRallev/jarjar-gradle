@@ -30,7 +30,7 @@ android {
 
 jarjar {
     // required, path to the executable .jar file
-    jarJarFile '../tools/jarjar-1.4.jar'
+    jarJarFile '../../tools/jarjar-1.4.jar'
 
     // optional, the rules for the jarjar tool
     rules = [

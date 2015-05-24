@@ -1,0 +1,46 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'net.vrallev.gradle:jarjar-gradle:1.0.1-SNAPSHOT'
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'net.vrallev.jarjar'
+
+mainClassName = 'net.vrallev.java.jarjar.demo.Demo'
+
+jarjar {
+    // required, path to the executable .jar file
+    jarJarFile '../tools/jarjar-1.4.jar'
+
+    // optional, the rules for the jarjar tool
+    rules = [
+            'rule com.squareup.okhttp.** ext.com.squareup.okhttp.@1'
+    ]
+
+    // optional, exclude files from the dependency .jar files
+    srcExcludes = ['META-INF/**']
+
+    // optional, default is build_repackaged.jar, the result .jar file name
+    outputName 'build_repackaged.jar'
+
+    // optional, default is libs, the directory of the result .jar
+    outputDir 'libs'
+
+    // optional, default is false
+    ignoreJarJarResult false
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    jarjar 'com.squareup.okhttp:okhttp:2.4.0-RC1'
+}
