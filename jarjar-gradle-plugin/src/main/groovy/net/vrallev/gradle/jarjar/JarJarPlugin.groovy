@@ -126,7 +126,12 @@ class JarJarPlugin implements Plugin<Project> {
 
     public static File getResultFile(Project project) {
         def ext = getExtension(project)
-        return new File(project.projectDir, "$ext.outputDir$File.separator$ext.outputName")
+        File file = new File(project.projectDir, "$ext.outputDir$File.separator$ext.outputName")
+        if (!file.parentFile.exists()) {
+            file.parentFile.mkdirs()
+        }
+
+        return file
     }
 
     public static boolean isJavaProject(Project project) {
