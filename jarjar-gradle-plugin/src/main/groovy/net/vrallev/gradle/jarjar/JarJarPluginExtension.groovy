@@ -15,7 +15,6 @@ class JarJarPluginExtension {
 
     boolean ignoreJarJarResult = false
     boolean verbose = false
-    boolean skipManifest = false
 
     boolean equals(o) {
         if (this.is(o)) return true
@@ -24,7 +23,6 @@ class JarJarPluginExtension {
         JarJarPluginExtension that = (JarJarPluginExtension) o
 
         if (ignoreJarJarResult != that.ignoreJarJarResult) return false
-        if (skipManifest != that.skipManifest) return false
         if (verbose != that.verbose) return false
         if (jarJarFile != that.jarJarFile) return false
         if (outputDir != that.outputDir) return false
@@ -44,7 +42,6 @@ class JarJarPluginExtension {
         result = 31 * result + (outputDir != null ? outputDir.hashCode() : 0)
         result = 31 * result + (ignoreJarJarResult ? 1 : 0)
         result = 31 * result + (verbose ? 1 : 0)
-        result = 31 * result + (skipManifest ? 1 : 0)
         return result
     }
 
@@ -58,7 +55,6 @@ class JarJarPluginExtension {
                 ", outputDir='" + outputDir + '\'' +
                 ", ignoreJarJarResult=" + ignoreJarJarResult +
                 ", verbose=" + verbose +
-                ", skipManifest=" + skipManifest +
                 '}';
     }
 }

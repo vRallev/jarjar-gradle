@@ -47,7 +47,6 @@ class RepackageTask extends DefaultTask {
 
             args.addAll 'java',
                     "-Dverbose=$extension.verbose",
-                    "-DskipManifest=$extension.skipManifest",
                     '-jar', jarJarExeFile.absolutePath,
                     'process', rulesFile.absolutePath,
                     rawFatJar.absolutePath,
