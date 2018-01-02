@@ -1,7 +1,11 @@
-jarjar-gradle
-=============
+# Deprecated
+### This project is not maintained anymore.
 
-This plugin let's you easily use the jarjar tool in your gradle builds. This is handy for dependencies, which need to be repackaged, e.g. the full bouncy castle library for Android projects.
+
+~~jarjar-gradle~~
+=================
+
+~~This plugin let's you easily use the jarjar tool in your gradle builds. This is handy for dependencies, which need to be repackaged, e.g. the full bouncy castle library for Android projects.~~
 
 You setup the maven dependencies in in the `dependencies` section as usual. This plugin fetches and repackages them. The built `.jar` file is added to the `libs` folder.
 
