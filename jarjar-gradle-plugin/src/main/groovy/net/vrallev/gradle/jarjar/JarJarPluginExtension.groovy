@@ -14,6 +14,7 @@ class JarJarPluginExtension {
     String outputDir = 'libs'
 
     boolean ignoreJarJarResult = false
+    boolean verbose = false
 
     boolean equals(o) {
         if (this.is(o)) return true
@@ -22,6 +23,7 @@ class JarJarPluginExtension {
         JarJarPluginExtension that = (JarJarPluginExtension) o
 
         if (ignoreJarJarResult != that.ignoreJarJarResult) return false
+        if (verbose != that.verbose) return false
         if (jarJarFile != that.jarJarFile) return false
         if (outputDir != that.outputDir) return false
         if (outputName != that.outputName) return false
@@ -39,6 +41,7 @@ class JarJarPluginExtension {
         result = 31 * result + (outputName != null ? outputName.hashCode() : 0)
         result = 31 * result + (outputDir != null ? outputDir.hashCode() : 0)
         result = 31 * result + (ignoreJarJarResult ? 1 : 0)
+        result = 31 * result + (verbose ? 1 : 0)
         return result
     }
 
@@ -51,6 +54,7 @@ class JarJarPluginExtension {
                 ", outputName='" + outputName + '\'' +
                 ", outputDir='" + outputDir + '\'' +
                 ", ignoreJarJarResult=" + ignoreJarJarResult +
+                ", verbose=" + verbose +
                 '}';
     }
 }

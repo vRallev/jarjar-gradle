@@ -36,13 +36,22 @@ class RepackageTask extends DefaultTask {
 
         project.exec {
             workingDir project.projectDir
-            ignoreExitValue = JarJarPlugin.getExtension(project).ignoreJarJarResult
 
+            def extension = JarJarPlugin.getExtension(project)
+            ignoreExitValue = extension.ignoreJarJarResult
+
+            def args = []
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', 'java', '-jar', jarJarExeFile.absolutePath, 'process', rulesFile.absolutePath, rawFatJar.absolutePath, outJar.absolutePath
-            } else {
-                commandLine 'java', '-jar', jarJarExeFile.absolutePath, 'process', rulesFile.absolutePath, rawFatJar.absolutePath, outJar.absolutePath
+                args.addAll 'cmd', '/c'
             }
+
+            args.addAll 'java',
+                    "-Dverbose=$extension.verbose",
+                    '-jar', jarJarExeFile.absolutePath,
+                    'process', rulesFile.absolutePath,
+                    rawFatJar.absolutePath,
+                    outJar.absolutePath
+            commandLine args
         }
 
         String variantString = getVariant(project)
